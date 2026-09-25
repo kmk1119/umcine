@@ -1,0 +1,8 @@
+.movie-card { min-width: 0; }
+.poster-container { position: relative; overflow: hidden; border-radius: 12px; background: #f3f3f3; }
+.movie-poster { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; }
+.bookmark-button { position: absolute; top: 12px; right: 12px; display: grid; place-items: center; width: 40px; height: 40px; padding: 8px; border: 1px solid #e5e5e5; border-radius: 50%; background: #fff; box-shadow: 0 2px 8px #00000014; }
+.bookmark-button:hover { background: #f2f2f2; }
+.movie-info { padding-top: 16px; }
+.movie-info h2 { font-size: 18px; font-weight: 700; line-height: 1.5; overflow-wrap: anywhere; }
+.movie-info time { display: block; margin-top: 6px; font-size: 14px; line-height: 1.5; color: #737373; }

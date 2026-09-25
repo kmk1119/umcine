@@ -1,0 +1,10 @@
+.site-header { border-bottom: 1px solid #e8e8e8; }
+.header-content { max-width: 1200px; min-height: 80px; padding: 0 24px; margin: 0 auto; display: flex; align-items: center; gap: 64px; }
+.brand { display: inline-flex; align-items: center; gap: 8px; font-size: 26px; font-weight: 800; letter-spacing: -1px; }
+.nav-link { display: inline-flex; align-items: center; min-height: 80px; font-size: 15px; font-weight: 700; border-bottom: 2px solid #171717; }
+
+@media (max-width: 560px) {
+  .header-content { min-height: 64px; gap: 32px; padding: 0 20px; }
+  .nav-link { min-height: 64px; font-size: 14px; }
+  .brand { font-size: 23px; }
+}
