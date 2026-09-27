@@ -8,5 +8,5 @@ export const Route = createRootRoute({
       <Outlet />
     </>
   ),
-  notFoundComponent: () => <main>페이지를 찾을 수 없어요.</main>,
+  notFoundComponent: () => <main className="px-5 py-16 text-center">페이지를 찾을 수 없어요.</main>,
 });
