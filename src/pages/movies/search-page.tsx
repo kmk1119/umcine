@@ -2,6 +2,7 @@ import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState, type SubmitEvent } from "react";
 import { movies } from "../../data/movies";
 import { cn } from "../../utils/cn";
+import { BookmarkButton } from "../../components/bookmark-button";
 
 export function SearchPage() {
   const { query } = useSearch({ from: "/search" });
@@ -55,6 +56,7 @@ function SearchContent({ query }: { query?: string }) {
                     <h3 className="text-lg font-bold break-keep sm:text-2xl"><Link to="/movies/$movieId" params={{ movieId: String(movie.id) }}>{movie.title}</Link></h3>
                     <div className="mt-2 flex flex-wrap gap-x-3 text-sm text-subtle sm:text-base"><p>{movie.originalTitle}</p><time dateTime={movie.releaseDate.replaceAll(".", "-")}>{movie.releaseDate}</time></div>
                     <p className="mt-3 text-sm leading-relaxed text-muted sm:text-base">{movie.overview}</p>
+                    <BookmarkButton movieId={movie.id} movieTitle={movie.title} className="mt-4" />
                     <Link to="/movies/$movieId" params={{ movieId: String(movie.id) }} className="mt-auto inline-flex items-center gap-2 pt-5 font-bold text-primary">상세 보기 <span aria-hidden="true">→</span></Link>
                   </div>
                 </li>

@@ -1,5 +1,6 @@
 import { Link, useParams } from "@tanstack/react-router";
 import { movies } from "../../data/movies";
+import { BookmarkButton } from "../../components/bookmark-button";
 
 export function MovieDetailPage() {
   const { movieId } = useParams({ from: "/movies/$movieId" });
@@ -17,6 +18,7 @@ export function MovieDetailPage() {
         <div className="mx-auto flex min-h-[380px] max-w-[1920px] flex-col justify-between gap-24 px-5 py-7 sm:min-h-[440px] sm:px-10 lg:px-16">
           <Link to="/" className="inline-flex w-fit items-center gap-2 font-bold"><span aria-hidden="true" className="text-3xl font-normal">‹</span> 영화 목록</Link>
           <div>
+            <BookmarkButton movieId={movie.id} movieTitle={movie.title} className="mb-4" />
             <h1 className="text-3xl leading-tight font-bold tracking-tight break-keep sm:text-5xl">{movie.title}</h1>
             <p className="mt-3 text-base text-white/90 sm:text-lg">{movie.originalTitle}</p>
             <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm font-bold sm:text-base">
