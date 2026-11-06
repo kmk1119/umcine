@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import type { Movie } from "../../types/movie";
+import type { MovieCardModel } from "../../types/movie";
 import { BookmarkButton } from "../bookmark-button";
+import { MovieImage } from "./movie-image";
 
 interface MovieCardProps {
-  movie: Movie;
+  movie: MovieCardModel;
 }
 
 export default function MovieCard({ movie }: MovieCardProps) {
@@ -11,7 +12,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
     <article className="min-w-0">
       <div className="relative overflow-hidden rounded-xl bg-[#f3f3f3]">
         <Link to="/movies/$movieId" params={{ movieId: String(movie.id) }}>
-          <img
+          <MovieImage
             className="aspect-[0.88] w-full object-cover"
             src={movie.posterPath}
             alt={`${movie.title} 포스터`}
@@ -29,7 +30,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
           className="mt-1 block text-xs leading-normal text-subtle sm:text-base"
           dateTime={movie.releaseDate.replaceAll(".", "-")}
         >
-          {movie.releaseDate}
+          {movie.releaseDate || "개봉일 정보 없음"}
         </time>
       </div>
     </article>

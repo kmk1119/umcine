@@ -1,29 +1,37 @@
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState, type SubmitEvent } from "react";
-import { movies } from "../../data/movies";
+import { useQuery } from "@tanstack/react-query";
+import { searchMovies } from "../../api/movies/search-movies";
+import { toMovieCard } from "../../utils/movies/to-movie-card";
+import { MovieImage } from "../../components/movies/movie-image";
+import { RequestError } from "../../components/movies/request-error";
+import Pagination from "../../components/movies/pagination";
 import { cn } from "../../utils/cn";
 import { BookmarkButton } from "../../components/bookmark-button";
 
 export function SearchPage() {
-  const { query } = useSearch({ from: "/search" });
-  return <SearchContent key={query ?? ""} query={query} />;
+  const { query, page = 1 } = useSearch({ from: "/search" });
+  return <SearchContent key={JSON.stringify([query, page])} query={query} page={page} />;
 }
 
-function SearchContent({ query }: { query?: string }) {
+function SearchContent({ query, page }: { query?: string; page: number }) {
   const navigate = useNavigate({ from: "/search" });
   const [searchText, setSearchText] = useState(query ?? "");
 
   const displayQuery = query?.trim() ?? "";
-  const normalizedQuery = displayQuery.toLowerCase();
-  const searchResults = normalizedQuery ? movies.filter((movie) =>
-    movie.title.toLowerCase().includes(normalizedQuery) ||
-    movie.originalTitle.toLowerCase().includes(normalizedQuery)
-  ) : [];
+  const normalizedQuery = displayQuery;
+  const searchQuery = useQuery({
+    queryKey: ["movies", "search", { query: normalizedQuery, page }],
+    queryFn: () => searchMovies({ query: normalizedQuery, page }),
+    enabled: normalizedQuery.length > 0,
+  });
+  const data = searchQuery.data;
+  const searchResults = data?.results.map(toMovieCard) ?? [];
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     const nextQuery = searchText.trim();
-    void navigate({ search: nextQuery ? { query: nextQuery } : {} });
+    void navigate({ search: nextQuery ? { query: nextQuery, page: 1 } : {} });
   }
 
   return (
@@ -41,21 +49,24 @@ function SearchContent({ query }: { query?: string }) {
         <>
           <div className="flex flex-wrap items-center justify-between gap-3 border-y border-line py-5" aria-live="polite">
             <h2 className="text-lg font-bold sm:text-xl">‘{displayQuery}’ 검색 결과</h2>
-            <p className="text-sm text-subtle">영화 {searchResults.length}편</p>
+            {searchQuery.isSuccess && <p className="text-sm text-subtle">영화 {searchQuery.data.total_results}편</p>}
           </div>
-          {searchResults.length === 0 ? (
+          {searchQuery.isLoading ? <p role="status" className="py-20 text-center">검색 결과를 불러오는 중이에요.</p>
+          : searchQuery.isError ? <RequestError message="검색 결과를 불러오지 못했어요." onRetry={() => { void searchQuery.refetch(); }} />
+          : searchQuery.isPending ? <p role="status" className="py-20 text-center">네트워크 연결을 기다리는 중이에요.</p>
+          : searchResults.length === 0 ? (
             <div className="py-20 text-center"><p className="text-xl font-bold">검색 결과가 없어요.</p><p className="mt-3 text-muted">다른 제목이나 원제로 검색해 보세요.</p></div>
           ) : (
             <ul className="grid gap-x-12 lg:grid-cols-2">
               {searchResults.map((movie) => (
                 <li key={movie.id} className="flex min-w-0 gap-5 border-b border-line py-7 sm:gap-6">
                   <Link to="/movies/$movieId" params={{ movieId: String(movie.id) }} className="w-24 shrink-0 self-start overflow-hidden rounded-xl sm:w-40">
-                    <img src={movie.posterPath} alt={movie.title + " 포스터"} className="aspect-[2/3] w-full object-cover" />
+                    <MovieImage src={movie.posterPath} alt={movie.title + " 포스터"} className="aspect-[2/3] w-full object-cover" />
                   </Link>
                   <div className="flex min-w-0 flex-1 flex-col items-start">
                     <h3 className="text-lg font-bold break-keep sm:text-2xl"><Link to="/movies/$movieId" params={{ movieId: String(movie.id) }}>{movie.title}</Link></h3>
-                    <div className="mt-2 flex flex-wrap gap-x-3 text-sm text-subtle sm:text-base"><p>{movie.originalTitle}</p><time dateTime={movie.releaseDate.replaceAll(".", "-")}>{movie.releaseDate}</time></div>
-                    <p className="mt-3 text-sm leading-relaxed text-muted sm:text-base">{movie.overview}</p>
+                    <div className="mt-2 flex flex-wrap gap-x-3 text-sm text-subtle sm:text-base"><p>{movie.originalTitle}</p><time dateTime={movie.releaseDate}>{movie.releaseDate || "개봉일 정보 없음"}</time></div>
+                    <p className="mt-3 text-sm leading-relaxed text-muted sm:text-base">{movie.overview || "줄거리 정보가 없어요."}</p>
                     <BookmarkButton movieId={movie.id} movieTitle={movie.title} className="mt-4" />
                     <Link to="/movies/$movieId" params={{ movieId: String(movie.id) }} className="mt-auto inline-flex items-center gap-2 pt-5 font-bold text-primary">상세 보기 <span aria-hidden="true">→</span></Link>
                   </div>
@@ -63,6 +74,8 @@ function SearchContent({ query }: { query?: string }) {
               ))}
             </ul>
           )}
+          {searchQuery.isSuccess && data && <Pagination currentPage={page} totalPages={Math.min(500, data.total_pages)}
+            onPageChange={(nextPage) => { void navigate({ search: { query: displayQuery, page: nextPage } }); }} />}
         </>
       )}
     </main>
