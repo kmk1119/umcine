@@ -4,3 +4,7 @@ export function getTmdbEnv() {
   if (!baseUrl || !accessToken) throw new Error("TMDB 환경 변수가 필요해요.");
   return { baseUrl: `${baseUrl.replace(/\/+$/, "")}/`, accessToken };
 }
+
+export const env = {
+  apiBaseUrl: import.meta.env.VITE_API_BASE_URL || "",
+};

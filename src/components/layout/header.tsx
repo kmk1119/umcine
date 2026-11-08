@@ -13,6 +13,8 @@ export function Header() {
         <nav aria-label="주 메뉴" className="flex items-center gap-5 sm:gap-8">
           <Link className={menuClass(pathname === "/")} to="/" aria-current={pathname === "/" ? "page" : undefined}>영화</Link>
           <Link className={menuClass(pathname === "/search")} to="/search" aria-current={pathname === "/search" ? "page" : undefined}>검색</Link>
+          <Link className={menuClass(pathname === "/login")} to="/login" aria-current={pathname === "/login" ? "page" : undefined}>로그인</Link>
+          <Link className={menuClass(pathname === "/profile" || pathname === "/profile/edit")} to="/profile" aria-current={pathname === "/profile" ? "page" : undefined}>내 정보</Link>
         </nav>
       </div>
     </header>
