@@ -1,0 +1,30 @@
+purpose:
+  stands_in_for: Local movie backend (offline); provisional week8 favorites contract.
+  unblocks: Browser verification of the real frontend without MySQL or JWT secrets.
+assumptions:
+  - id: existing-member-rating-contract
+    status: supported
+    claim: Local source returns an unwrapped array for member ratings and wrapped results for mutations.
+    reason: Inspected RatingController and DTOs in the sibling movie repository.
+    verification: Source inspection on 2026-11-11; live backend was not listening on port 8080.
+    source: ../movie/src/main/java/com/umc/movie/controller/RatingController.java; docs/week8-api.md
+    updated_at: "2026-11-11"
+  - id: provisional-favorites
+    status: unknown
+    claim: Favorites use the provisional JSON shapes in docs/week8-api.md.
+    reason: The user confirmed week8 backend is not implemented; no provider contract exists yet.
+    verification: Only a stand-in can exercise these shapes; live verification remains pending.
+    source: docs/week8-api.md; postman/mocks/umcine/default.js
+    updated_at: "2026-11-11"
+  - id: browser-frontend-simulation
+    status: supported
+    claim: The frontend handled login, nickname update, favorites and rating CRUD, rating 500, favorites 404 and auth 401 in the scenarios exercised.
+    reason: Browser UI changes matched Postman HTTP request events for the real Vite frontend.
+    verification: On 2026-11-11, observed protected redirects, persisted auth across reloads, updated nickname, favorite add/remove, rating create/update/delete and failure recovery. No live backend verification. The mock state access was serialized after this run to avoid concurrent fixture updates.
+    source: docs/week8-api.md; src/components/movie-rating.tsx; postman/mocks/umcine/default.js
+    updated_at: "2026-11-11"
+fingerprints:
+  - id: week8-working-tree
+    date: "2026-11-11"
+    commit: 7eebbfecde632414adec5949d6c4afa4dd2f0ea8 (dirty working tree)
+    cli: 1.85.0

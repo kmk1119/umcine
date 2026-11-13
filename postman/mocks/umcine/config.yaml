@@ -1,0 +1,10 @@
+version: 1
+name: umcine-week8
+slug: umcine-week8
+protocol: http
+port: 4010
+interceptRequests: true
+scenarios:
+  - name: default
+    path: ./default.js
+    default: true

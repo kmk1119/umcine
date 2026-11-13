@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "umcine-dev",
+      "runtimeExecutable": "corepack.cmd",
+      "runtimeArgs": ["pnpm", "dev"],
+      "port": 5173
+    }
+  ]
+}

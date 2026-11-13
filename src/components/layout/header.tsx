@@ -1,8 +1,13 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { cn } from "../../utils/cn";
+import { useAuthStore } from "../../stores/auth-store";
+import { useMeQuery } from "../../hooks/use-me-query";
 
 export function Header() {
   const pathname = useLocation({ select: (location) => location.pathname });
+  const token = useAuthStore((state) => state.accessToken);
+  const me = useMeQuery();
+  const navigate = useNavigate();
   const menuClass = (active: boolean) => cn("py-2 text-sm font-bold sm:text-base", active ? "text-ink underline underline-offset-4" : "text-muted hover:text-ink");
   return (
     <header className="border-b border-line bg-white">
@@ -10,11 +15,18 @@ export function Header() {
         <Link className="flex shrink-0 items-center gap-2 text-2xl font-extrabold tracking-tight" to="/" aria-label="UMCine 영화 목록">
           <span className="grid size-10 place-items-center rounded-lg border-2 border-ink"><img src="/icons/movie-icons/movie.svg" alt="" className="size-7" /></span>UMCine
         </Link>
-        <nav aria-label="주 메뉴" className="flex items-center gap-5 sm:gap-8">
-          <Link className={menuClass(pathname === "/")} to="/" aria-current={pathname === "/" ? "page" : undefined}>영화</Link>
-          <Link className={menuClass(pathname === "/search")} to="/search" aria-current={pathname === "/search" ? "page" : undefined}>검색</Link>
-          <Link className={menuClass(pathname === "/login")} to="/login" aria-current={pathname === "/login" ? "page" : undefined}>로그인</Link>
-          <Link className={menuClass(pathname === "/profile" || pathname === "/profile/edit")} to="/profile" aria-current={pathname === "/profile" ? "page" : undefined}>내 정보</Link>
+        <nav aria-label="주 메뉴" className="flex flex-wrap items-center gap-5 sm:gap-8">
+          <Link className={menuClass(pathname === "/")} to="/">영화</Link>
+          <Link className={menuClass(pathname === "/search")} to="/search">검색</Link>
+          {!token ? <Link className={menuClass(pathname === "/login")} to="/login">로그인</Link>
+            : me.isLoading ? <span role="status" className="h-10 w-24 animate-pulse rounded-lg bg-gray-200">조회 중</span>
+            : <>
+              <Link className={menuClass(pathname.startsWith("/profile"))} to="/profile">{me.data?.nickname ? `${me.data.nickname}님` : "마이페이지"}</Link>
+              <button className={menuClass(false)} onClick={() => {
+                useAuthStore.getState().setAccessToken(null);
+                void navigate({ to: "/login" });
+              }}>로그아웃</button>
+            </>}
         </nav>
       </div>
     </header>

@@ -1,0 +1,6 @@
+simulation: umcine-week8
+routing: path
+mocks:
+  - name: umcine
+    routeKey: api
+    path: postman/mocks/umcine

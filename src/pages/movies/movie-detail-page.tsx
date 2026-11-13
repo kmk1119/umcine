@@ -7,6 +7,8 @@ import { MovieImage } from "../../components/movies/movie-image";
 import { RequestError } from "../../components/movies/request-error";
 import { BookmarkButton } from "../../components/bookmark-button";
 
+import { MovieRating } from "../../components/movie-rating";
+
 export function MovieDetailPage() {
   const { movieId } = useParams({ from: "/movies/$movieId" });
   const parsedMovieId = Number(movieId);
@@ -51,7 +53,7 @@ export function MovieDetailPage() {
         <section>
           <h2 className="text-2xl font-bold break-keep">{movie.tagline || "줄거리"}</h2>
           <p className="mt-4 whitespace-pre-line text-base leading-8 text-muted">{movie.overview || "줄거리 정보가 없어요."}</p>
-
+          <MovieRating movieId={movie.id} />
         </section>
       </div>
     </main>

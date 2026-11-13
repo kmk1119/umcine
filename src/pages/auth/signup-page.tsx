@@ -1,9 +1,9 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import type { SubmitEvent } from "react";
 import { checkEmailDuplicate } from "../../api/members/check-email-duplicate";
 import { checkNicknameDuplicate } from "../../api/members/check-nickname-duplicate";
-import { signup } from "../../api/members/signup";
+import { useSignupMutation } from "../../hooks/use-signup-mutation";
 import { MemberCard, MemberField, memberButton, memberLink } from "../../components/member-form";
 import { isValidEmail, isValidNickname, isValidPassword } from "../../utils/member-validation";
 
@@ -18,8 +18,8 @@ type CheckStatus = "idle" | "checking" | "available" | "taken" | "failed";
 export function SignupPage() {
   const [form, setForm] = useState(initialForm);
   const [checks, setChecks] = useState<Record<DuplicateField, CheckStatus>>({ email: "idle", nickname: "idle" });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
+  const signupMutation = useSignupMutation();
+  const isSubmitting = signupMutation.isPending;
   const passwordValid = isValidPassword(form.password);
   const confirmationValid = form.passwordConfirm.length > 0 && form.password === form.passwordConfirm;
   const canSubmit = isValidEmail(form.email) && isValidNickname(form.nickname) && passwordValid &&
@@ -45,23 +45,10 @@ export function SignupPage() {
     }
   }
 
-  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!canSubmit) return;
-    setIsSubmitting(true);
-    try {
-      const response = await signup({
-        email: form.email.trim(),
-        nickname: form.nickname.trim(),
-        password: form.password,
-      });
-      alert(response.message);
-      if (response.isSuccess) void navigate({ to: "/login" });
-    } catch {
-      alert("회원가입에 실패했어요. 다시 시도해 주세요.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    if (!canSubmit || signupMutation.isPending) return;
+    signupMutation.mutate({ email: form.email.trim(), nickname: form.nickname.trim(), password: form.password });
   }
 
   return (
