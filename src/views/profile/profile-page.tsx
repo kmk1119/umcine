@@ -1,4 +1,6 @@
-import { Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { MemberCard, memberLink } from "../../components/member-form";
 import { useMeQuery } from "../../hooks/use-me-query";
 import { ProfileFavorites } from "../../components/profile-favorites";
@@ -12,7 +14,7 @@ export function ProfilePage() {
       <div><dt className="text-sm text-muted">닉네임</dt><dd className="font-bold">{me.nickname}</dd></div>
       <div><dt className="text-sm text-muted">가입일</dt><dd>{me.createdAt.slice(0, 10)}</dd></div>
     </dl>
-    <Link className={memberLink} to="/profile/edit">내 정보 수정</Link>
+    <Link className={memberLink} href="/profile/edit">내 정보 수정</Link>
     <ProfileFavorites />
   </MemberCard>;
 }

@@ -1,10 +1,11 @@
-import { Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useFavorites } from "../hooks/use-favorites";
-import { getMovieDetail } from "../api/movies/get-movie-detail";
+import { getMovieSummary } from "../api/movies/get-movie-summary";
 import { getRequestError } from "../api/response";
 import { MovieImage } from "./movies/movie-image";
-import { getTmdbPosterUrl } from "../utils/movies/tmdb-image";
 import { BookmarkButton } from "./bookmark-button";
 
 export function ProfileFavorites() {
@@ -18,10 +19,10 @@ export function ProfileFavorites() {
   </section>;
 }
 function FavoriteMovie({ movieId }: { movieId: number }) {
-  const query = useQuery({ queryKey: ["movies", "detail", movieId], queryFn: () => getMovieDetail(movieId), staleTime: 30 * 1000 });
+  const query = useQuery({ queryKey: ["movies", "summary", movieId], queryFn: ({ signal }) => getMovieSummary(movieId, signal), staleTime: 30 * 1000 });
   return <div className="flex items-center gap-3">
-    <Link className="flex min-w-0 flex-1 items-center gap-3 font-bold" to="/movies/$movieId" params={{ movieId: String(movieId) }}>
-      <MovieImage src={getTmdbPosterUrl(query.data?.poster_path ?? null)} alt="" className="h-20 w-14 rounded object-cover" />
+    <Link className="flex min-w-0 flex-1 items-center gap-3 font-bold" href={`/movies/${movieId}`}>
+      <MovieImage src={query.data?.posterPath ?? null} alt="" width={56} height={80} sizes="56px" className="h-20 w-14 rounded object-cover" />
       <span>{query.data?.title ?? (query.isLoading ? "영화 정보 조회 중" : `영화 #${movieId}`)}</span>
     </Link>
     <BookmarkButton movieId={movieId} movieTitle={query.data?.title ?? `영화 ${movieId}`} iconOnly />

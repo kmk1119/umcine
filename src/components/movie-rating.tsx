@@ -1,18 +1,22 @@
-import { Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { createRating, deleteRating, getMemberRatings, updateRating, type Rating, type RatingInput } from "../api/ratings";
 import { getRequestError } from "../api/response";
-import { getMemberId, useAuthStore } from "../stores/auth-store";
+import { getMemberId, useAuthReady, useAuthStore } from "../stores/auth-store";
 import { memberButton } from "./member-form";
 
 export function MovieRating({ movieId }: { movieId: number }) {
+  const ready = useAuthReady();
   const token = useAuthStore((state) => state.accessToken);
   const memberId = getMemberId(token);
   // 성공 후 목록을 다시 조회하면 RatingForm이 새 key로 다시 마운트되므로 안내 문구는 부모가 보관한다.
   const [notice, setNotice] = useState<{ movieId: number; text: string } | null>(null);
   const ratings = useQuery({ queryKey: ["ratings", memberId], queryFn: ({ signal }) => getMemberRatings(memberId!, signal), enabled: Boolean(token && memberId), retry: false });
-  if (!token) return <section className="mt-8 border-t border-line pt-6"><h2 className="text-xl font-bold">내 평점과 후기</h2><p className="mt-3"><Link className="underline" to="/login">로그인</Link>하고 평점을 남겨보세요.</p></section>;
+  if (!ready) return <p role="status" className="mt-8">로그인 상태를 확인하는 중이에요.</p>;
+  if (!token) return <section className="mt-8 border-t border-line pt-6"><h2 className="text-xl font-bold">내 평점과 후기</h2><p className="mt-3"><Link className="underline" href="/login">로그인</Link>하고 평점을 남겨보세요.</p></section>;
   if (!memberId) return <p role="alert" className="mt-8">회원 번호를 확인할 수 없어요. 로그아웃 후 다시 로그인해 주세요.</p>;
   if (ratings.isPending) return <p role="status" className="mt-8">내 평점을 불러오는 중이에요.</p>;
   if (ratings.isError) return <div role="alert" className="mt-8"><p>{getRequestError(ratings.error)}</p><button className="underline" onClick={() => void ratings.refetch()}>평점 다시 조회</button></div>;

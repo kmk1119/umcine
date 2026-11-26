@@ -7,7 +7,7 @@
   --color-subtle: #989eac;
   --color-line: #e3e5eb;
   --color-canvas: #f6f7f9;
-  --font-sans: "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  --font-sans: var(--font-noto-sans-kr), "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif;
 }
 
 @layer base {

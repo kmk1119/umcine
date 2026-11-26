@@ -1,4 +1,6 @@
-import { Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { useState } from "react";
 import type { SubmitEvent } from "react";
 import { checkEmailDuplicate } from "../../api/members/check-email-duplicate";
@@ -86,7 +88,7 @@ export function SignupPage() {
           <button className={memberButton} disabled={!canSubmit}>{isSubmitting ? "가입 중" : "가입하기"}</button>
         </fieldset>
       </form>
-      <p className="mt-6 text-center text-sm">이미 계정이 있나요? <Link className={memberLink} to="/login">로그인</Link></p>
+      <p className="mt-6 text-center text-sm">이미 계정이 있나요? <Link className={memberLink} href="/login">로그인</Link></p>
     </MemberCard>
   );
 }

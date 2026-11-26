@@ -1,14 +1,25 @@
-import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { MemberCard, MemberField, memberButton, memberLink } from "../../components/member-form";
 import { isValidEmail } from "../../utils/member-validation";
 import { useLoginMutation } from "../../hooks/use-login-mutation";
 import { getRequestError } from "../../api/response";
+import { useAuthReady, useAuthStore } from "../../stores/auth-store";
 
 export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const mutation = useLoginMutation();
+  const ready = useAuthReady();
+  const token = useAuthStore((state) => state.accessToken);
+  const router = useRouter();
+  // 기존 beforeLoad 대신, 브라우저에서 토큰 복원이 끝난 뒤 이미 로그인 상태면 홈으로 보낸다.
+  useEffect(() => {
+    if (ready && token && !mutation.isSuccess) router.replace("/");
+  }, [ready, token, mutation.isSuccess, router]);
   const canSubmit = isValidEmail(email) && password.length > 0;
   return (
     <MemberCard title="로그인">
@@ -27,7 +38,7 @@ export function LoginPage() {
           {mutation.isError && <p role="alert" className="text-sm text-red-600">{getRequestError(mutation.error)}</p>}
         </fieldset>
       </form>
-      <p className="mt-6 text-center text-sm">계정이 없으신가요? <Link className={memberLink} to="/signup">회원가입</Link></p>
+      <p className="mt-6 text-center text-sm">계정이 없으신가요? <Link className={memberLink} href="/signup">회원가입</Link></p>
     </MemberCard>
   );
 }

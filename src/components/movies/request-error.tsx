@@ -1,3 +1,5 @@
+"use client";
+
 export function RequestError({ message, onRetry }: { message: string; onRetry: () => void }) {
   return <div role="alert" className="py-16 text-center">
     <p className="font-bold">{message}</p>
