@@ -1,10 +1,4 @@
-export function getTmdbEnv() {
-  const baseUrl = import.meta.env.VITE_TMDB_API_BASE_URL?.trim();
-  const accessToken = import.meta.env.VITE_TMDB_ACCESS_TOKEN?.trim();
-  if (!baseUrl || !accessToken) throw new Error("TMDB 환경 변수가 필요해요.");
-  return { baseUrl: `${baseUrl.replace(/\/+$/, "")}/`, accessToken };
-}
-
+// NEXT_PUBLIC_ 접두사가 붙은 값만 브라우저 번들에 포함된다. 백엔드 주소는 브라우저에서 요청하므로 공개 값이다.
 export const env = {
-  apiBaseUrl: import.meta.env.VITE_API_BASE_URL || "",
+  apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || "",
 };

@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #4b60e9;
+  --color-ink: #191a20;
+  --color-muted: #777d8b;
+  --color-subtle: #989eac;
+  --color-line: #e3e5eb;
+  --color-canvas: #f6f7f9;
+  --font-sans: var(--font-noto-sans-kr), "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif;
+}
+
+@layer base {
+  body { @apply m-0 min-w-80 bg-canvas font-sans text-ink antialiased; }
+  button:not(:disabled), a { @apply cursor-pointer; }
+  button:disabled { @apply cursor-not-allowed; }
+  button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible {
+    @apply outline-2 outline-offset-4 outline-primary;
+  }
+}
